@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # FairStake - Transparent On-Chain Fantasy Sports Escrow 🏆
 
 > **Cardano Hackathon Submission**
@@ -123,3 +124,6 @@ If you don't have browser extensions installed, use the built-in mock mode:
 3.  Fund the wallet by entering your address at the [Cardano Testnet Faucet](https://docs.cardano.org/cardano-testnet/faucet/).
 4.  Enter the contest, select a roster, and sign the transaction popup. The dApp will lock your ADA on-chain.
 5.  Confirm the transaction hash on the [CardanoScan Preprod Explorer](https://preprod.cardanoscan.io/).
+=======
+# codex
+>>>>>>> a393b169fc70f5bf19e4ba96806582fbfe79d08a
