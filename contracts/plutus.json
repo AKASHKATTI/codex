@@ -1,0 +1,49 @@
+{
+  "preamble": {
+    "title": "fairstake/escrow",
+    "description": "Transparent On-Chain Fantasy Sports Escrow",
+    "version": "1.1.0",
+    "plutusVersion": "plutusV2"
+  },
+  "validators": [
+    {
+      "title": "escrow.escrow",
+      "datum": {
+        "title": "EscrowDatum",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "contest_id": { "type": "string", "format": "hex" },
+            "player": { "type": "string", "format": "hex" },
+            "deadline": { "type": "integer" }
+          },
+          "required": ["contest_id", "player", "deadline"]
+        }
+      },
+      "redeemer": {
+        "title": "EscrowRedeemer",
+        "schema": {
+          "oneOf": [
+            {
+              "title": "Settle",
+              "type": "object",
+              "properties": {
+                "winner1": { "type": "string", "format": "hex" },
+                "winner2": { "type": "string", "format": "hex" },
+                "winner3": { "type": "string", "format": "hex" },
+                "fee_address": { "type": "string", "format": "hex" }
+              },
+              "required": ["winner1", "winner2", "winner3", "fee_address"]
+            },
+            {
+              "title": "Refund",
+              "type": "object",
+              "properties": {}
+            }
+          ]
+        }
+      },
+      "compiledCode": "4d01000033222220051200120011"
+    }
+  ]
+}

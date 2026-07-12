@@ -1,0 +1,99 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String        @id @default(uuid())
+  username      String        @unique
+  walletAddress String        @unique
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  teams         FantasyTeam[]
+  transactions  Transaction[]
+  rewards       Reward[]
+}
+
+model Match {
+  id            String      @id @default(uuid())
+  homeTeam      String
+  awayTeam      String
+  status        String      @default("SCHEDULED") // SCHEDULED, ONGOING, COMPLETED, CANCELLED
+  matchDate     DateTime
+  homeScore     Int         @default(0)
+  awayScore     Int         @default(0)
+  officialStats String?     // Stringified JSON of detailed player scores
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  contests      Contest[]
+}
+
+model Contest {
+  id           String        @id @default(uuid())
+  title        String
+  description  String
+  entryFee     BigInt        // In Lovelaces (1 ADA = 1,000,000 Lovelaces)
+  maxPlayers   Int
+  matchId      String
+  match        Match         @relation(fields: [matchId], references: [id])
+  status       String        @default("UPCOMING") // UPCOMING, ACTIVE, RESOLVED, CANCELLED
+  prizePool    BigInt        @default(0)
+  escrowAddress String
+  deadline     DateTime
+  winner1Id    String?
+  winner2Id    String?
+  winner3Id    String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  teams        FantasyTeam[]
+  transactions Transaction[]
+  rewards      Reward[]
+}
+
+model FantasyTeam {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  contestId String
+  contest   Contest  @relation(fields: [contestId], references: [id])
+  players   String   // JSON string containing selected players
+  score     Float    @default(0.0)
+  rank      Int?
+  createdAt DateTime @default(now())
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  contestId String?
+  contest   Contest? @relation(fields: [contestId], references: [id])
+  txHash    String   @unique
+  amount    BigInt
+  type      String   // DEPOSIT, WITHDRAWAL, REFUND, PAYOUT
+  status    String   @default("PENDING") // PENDING, CONFIRMED, FAILED
+  createdAt DateTime @default(now())
+}
+
+model Reward {
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  contestId   String
+  contest     Contest    @relation(fields: [contestId], references: [id])
+  rewardType  String     // PARTICIPATION_NFT, WINNER_NFT, CHAMPION_NFT
+  nftAssetId  String     // PolicyId + AssetNameHex
+  txHash      String
+  createdAt   DateTime   @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String
+  details   String
+  createdAt DateTime @default(now())
+}
